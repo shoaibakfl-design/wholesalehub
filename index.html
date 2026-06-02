@@ -214,8 +214,8 @@ tr:hover td{background:#fafafa}
 
       <!-- LOGIN -->
       <div id="login-form">
-        <div class="form-group"><label>Email</label><input id="login-email" type="email" placeholder="yourname@email.com"/></div>
-        <div class="form-group"><label>Password</label><input id="login-pass" type="password" placeholder="Your password"/></div>
+        <div class="form-group"><label>Email</label><input id="login-email" type="email" autocomplete="off" placeholder="yourname@email.com"/></div>
+        <div class="form-group"><label>Password</label><input id="login-pass" type="password" autocomplete="off" placeholder="Your password"/></div>
         <button class="btn-auth" onclick="doLogin()">Login →</button>
         <div class="auth-divider">New retailer? <a href="#" onclick="switchAuthTab('signup')" style="color:#1d9e75;text-decoration:none;font-weight:600">Register here</a></div>
       </div>
@@ -466,6 +466,11 @@ var badgeClass={'Best Seller':'b-green','High Margin':'b-amber','New Arrival':'b
 var statusClass={'Delivered':'b-green','Out for Delivery':'b-blue','Confirmed':'b-green','Pending':'b-amber'};
 var statusNext={'Pending':'Confirmed','Confirmed':'Out for Delivery','Out for Delivery':'Delivered'};
 
+// CHECK EXISTING SESSION ON LOAD
+async function checkSession(){
+  // Always show login on app open — no auto session
+}
+
 // AUTH FUNCTIONS
 function switchAuthTab(t){
   document.querySelectorAll('.auth-tab').forEach(b=>b.classList.remove('active'));
@@ -546,6 +551,7 @@ async function loadUserRole(){
 
 async function doLogout(){
   await fetch(SUPA_URL+'/auth/v1/logout',{method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+currentToken}});
+  localStorage.removeItem('wh_session');
   currentUser=null;currentToken=null;currentRole=null;
   document.getElementById('app-screen').style.display='none';
   document.getElementById('auth-screen').style.display='block';
@@ -907,6 +913,9 @@ document.addEventListener('keydown',function(e){
     if(document.getElementById('signup-form').style.display!=='none'&&document.activeElement.closest('#signup-form'))doSignup();
   }
 });
+
+// AUTO SESSION CHECK ON LOAD
+checkSession();
 </script>
 </body>
 </html>
