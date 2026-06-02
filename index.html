@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>WholesaleHub PRO</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif}
+body{background:#f0f2f5;display:flex;min-height:100vh;font-size:14px}
+.sidebar{width:210px;background:#111827;display:flex;flex-direction:column;position:fixed;height:100vh;z-index:10}
+.logo{padding:18px 16px;border-bottom:1px solid #1f2937}
+.logo h2{font-size:15px;font-weight:700;color:#fff}
+.logo p{font-size:11px;color:#6b7280;margin-top:2px}
+.logo .version{display:inline-block;background:#1d9e75;color:#fff;font-size:9px;padding:1px 6px;border-radius:10px;margin-left:6px;font-weight:700}
+.nav-section{font-size:10px;color:#4b5563;padding:10px 16px 4px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.nav-btn{display:flex;align-items:center;gap:10px;padding:9px 16px;background:none;border:none;cursor:pointer;font-size:13px;color:#9ca3af;text-align:left;width:100%;border-left:3px solid transparent;transition:all .15s;position:relative}
+.nav-btn:hover{background:#1f2937;color:#fff}
+.nav-btn.active{background:#1f2937;color:#fff;border-left-color:#1d9e75;font-weight:600}
+.nav-badge{background:#ef4444;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;margin-left:auto;font-weight:700}
+.sidebar-footer{margin-top:auto;padding:14px 16px;border-top:1px solid #1f2937}
+.owner{display:flex;align-items:center;gap:8px}
+.owner-av{width:32px;height:32px;border-radius:50%;background:#1d9e75;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff}
+.owner-info strong{font-size:13px;color:#fff;display:block}
+.owner-info span{font-size:11px;color:#6b7280}
+.main{margin-left:210px;flex:1;padding:24px;min-height:100vh}
+.page{display:none}.page.active{display:block}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.page-header h1{font-size:20px;font-weight:700;color:#111}
+.page-header p{font-size:13px;color:#888;margin-top:2px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.metric{background:#fff;border-radius:12px;padding:16px;border:1px solid #e5e7eb}
+.metric-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:10px}
+.metric label{font-size:12px;color:#888;display:block;margin-bottom:4px}
+.metric .val{font-size:22px;font-weight:700;color:#111}
+.metric .trend{font-size:11px;margin-top:4px;color:#1d9e75}
+.card{background:#fff;border-radius:12px;border:1px solid #e5e7eb;overflow:hidden;margin-bottom:16px}
+.card-header{padding:12px 16px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between}
+.card-header h3{font-size:14px;font-weight:600;color:#111}
+.row{display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid #f5f5f5}
+.row:last-child{border-bottom:none}
+.badge{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600;white-space:nowrap}
+.b-green{background:#e1f5ee;color:#0f6e56}
+.b-amber{background:#faeeda;color:#854f0b}
+.b-blue{background:#e6f1fb;color:#185fa5}
+.b-red{background:#fcebeb;color:#a32d2d}
+.b-gray{background:#f3f4f6;color:#555}
+.b-purple{background:#ede9fe;color:#5b21b6}
+.btn{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:.15s}
+.btn-primary{background:#1d9e75;color:#fff}.btn-primary:hover{background:#0f6e56}
+.btn-secondary{background:#f3f4f6;color:#333;border:1px solid #e5e7eb}.btn-secondary:hover{background:#e5e7eb}
+.btn-danger{background:#fee2e2;color:#b91c1c;border:none}.btn-danger:hover{background:#fecaca}
+.btn-sm{padding:5px 11px;font-size:12px}
+.search-bar{display:flex;align-items:center;gap:8px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:7px 12px;margin-bottom:14px}
+.search-bar input{border:none;background:none;outline:none;font-size:13px;width:100%;color:#111}
+.filter-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.filter-btn{font-size:12px;padding:5px 13px;border-radius:20px;border:1px solid #ddd;background:#fff;cursor:pointer;color:#666}
+.filter-btn.active{background:#1d9e75;color:#fff;border-color:#1d9e75;font-weight:600}
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:12px}
+.prod-card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:14px;transition:.15s}
+.prod-card:hover{border-color:#1d9e75;box-shadow:0 0 0 3px rgba(29,158,117,.08)}
+.prod-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
+.prod-name{font-size:13px;font-weight:600;color:#111;line-height:1.4}
+.prod-cat{font-size:11px;color:#888;margin-bottom:8px}
+.prod-price{font-size:19px;font-weight:700;color:#111;margin-bottom:6px}
+.prod-meta{display:flex;justify-content:space-between;font-size:12px;color:#888}
+.stock-bar{height:3px;background:#e5e7eb;border-radius:2px;margin-top:8px}
+.stock-fill{height:100%;border-radius:2px}
+.order-card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:14px;margin-bottom:10px}
+.order-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.order-retailer{font-size:14px;font-weight:600;color:#111}
+.order-meta{font-size:12px;color:#888}
+.order-items{font-size:12px;color:#777;margin-bottom:10px;padding:8px;background:#f9fafb;border-radius:6px}
+.order-bottom{display:flex;align-items:center;justify-content:space-between}
+table{width:100%;border-collapse:collapse}
+th{background:#f9fafb;font-size:12px;color:#6b7280;font-weight:600;padding:10px 16px;text-align:left;border-bottom:1px solid #e5e7eb}
+td{font-size:13px;padding:11px 16px;border-bottom:1px solid #f5f5f5;color:#333}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafafa}
+.chat-container{display:flex;gap:16px;height:500px}
+.chat-sidebar{width:200px;flex-shrink:0;background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow-y:auto}
+.chat-sidebar-title{padding:12px;font-size:12px;font-weight:700;color:#6b7280;border-bottom:1px solid #f0f0f0;text-transform:uppercase}
+.retailer-item{display:flex;align-items:center;gap:8px;padding:10px 12px;cursor:pointer;border-bottom:1px solid #f5f5f5}
+.retailer-item:hover{background:#f9fafb}
+.ret-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.ret-name{font-size:13px;font-weight:500;color:#111}
+.chat-main{flex:1;display:flex;flex-direction:column;background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden}
+.chat-header{padding:12px 16px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:10px}
+.chat-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.msg{display:flex;gap:8px;align-items:flex-end}
+.msg.owner{flex-direction:row-reverse}
+.av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.av.retailer{background:#e5e7eb;color:#555}
+.av.owner{background:#1d9e75;color:#fff}
+.bubble-wrap{max-width:65%}
+.msg-meta{font-size:10px;color:#aaa;margin-bottom:2px}
+.msg.owner .msg-meta{text-align:right}
+.bubble{padding:9px 13px;border-radius:14px;font-size:13px;line-height:1.5}
+.bubble.retailer{background:#f3f4f6;color:#111}
+.bubble.owner{background:#1d9e75;color:#fff}
+.chat-input-bar{display:flex;gap:8px;padding:12px;border-top:1px solid #f0f0f0}
+.chat-input-bar input{flex:1;padding:9px 13px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;outline:none}
+.chat-input-bar input:focus{border-color:#1d9e75}
+.announce-card{border-radius:12px;padding:14px;margin-bottom:10px;border:1px solid #e5e7eb}
+.form-group{margin-bottom:12px}
+.form-group label{font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:4px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-size:13px;outline:none;background:#fff;color:#111}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:#1d9e75}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.retailer-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.retailer-card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:14px}
+.ret-card-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.ret-card-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center}
+.modal-bg.show{display:flex}
+.modal{background:#fff;border-radius:16px;padding:20px;width:420px;max-width:90vw;max-height:90vh;overflow-y:auto}
+.modal h3{font-size:16px;font-weight:700;margin-bottom:16px;color:#111}
+.modal-btns{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
+.toast{position:fixed;bottom:24px;right:24px;background:#111;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;z-index:200;opacity:0;transition:.3s;pointer-events:none}
+.toast.show{opacity:1}
+.loading{text-align:center;padding:30px;color:#888;font-size:13px}
+.spinner{display:inline-block;width:20px;height:20px;border:2px solid #e5e7eb;border-top-color:#1d9e75;border-radius:50%;animation:spin .6s linear infinite;margin-right:8px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+.chart-box{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px;margin-bottom:16px}
+.chart-box h3{font-size:14px;font-weight:600;color:#111;margin-bottom:14px}
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:120px}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar{width:100%;border-radius:4px 4px 0 0;transition:.3s;min-height:4px}
+.bar-label{font-size:11px;color:#888}
+.bar-val{font-size:11px;font-weight:600;color:#111}
+@media(max-width:768px){
+  .sidebar{width:56px}.logo h2,.logo p,.nav-btn span,.owner-info,.nav-section,.nav-badge{display:none}
+  .main{margin-left:56px;padding:14px}.grid4{grid-template-columns:1fr 1fr}
+  .chat-container{flex-direction:column}.chat-sidebar{width:100%;height:100px}
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo"><h2>WholesaleHub <span class="version">PRO</span></h2><p>Owner Dashboard</p></div>
+  <div class="nav-section">Main</div>
+  <button class="nav-btn active" onclick="showPage('dashboard',this)">📊 <span>Dashboard</span></button>
+  <button class="nav-btn" onclick="showPage('analytics',this)">📈 <span>Analytics</span></button>
+  <div class="nav-section">Catalogue</div>
+  <button class="nav-btn" onclick="showPage('catalogue',this)">📦 <span>Products</span></button>
+  <button class="nav-btn" onclick="showPage('inventory',this)">🗃️ <span>Inventory</span><span class="nav-badge" id="nb-low"></span></button>
+  <div class="nav-section">Business</div>
+  <button class="nav-btn" onclick="showPage('orders',this)">🚚 <span>Orders</span><span class="nav-badge" id="nb-orders"></span></button>
+  <button class="nav-btn" onclick="showPage('retailers',this)">🏪 <span>Retailers</span></button>
+  <div class="nav-section">Communication</div>
+  <button class="nav-btn" onclick="showPage('chat',this)">💬 <span>Forum & Chat</span></button>
+  <button class="nav-btn" onclick="showPage('announce',this)">📢 <span>Announcements</span></button>
+  <div class="nav-section">Settings</div>
+  <button class="nav-btn" onclick="showPage('settings',this)">⚙️ <span>Settings</span></button>
+  <div class="sidebar-footer">
+    <div class="owner"><div class="owner-av">O</div><div class="owner-info"><strong>Owner</strong><span>Admin · Faisalabad</span></div></div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- DASHBOARD -->
+<div class="page active" id="page-dashboard">
+  <div class="page-header"><div><h1>Dashboard</h1><p>Business overview</p></div></div>
+  <div class="grid4">
+    <div class="metric"><div class="metric-icon" style="background:#e1f5ee">💰</div><label>Total Revenue</label><div class="val" id="m-revenue">—</div></div>
+    <div class="metric"><div class="metric-icon" style="background:#e6f1fb">📦</div><label>Total Orders</label><div class="val" id="m-orders">—</div></div>
+    <div class="metric"><div class="metric-icon" style="background:#faeeda">⏳</div><label>Pending / Active</label><div class="val" id="m-pending">—</div></div>
+    <div class="metric"><div class="metric-icon" style="background:#ede9fe">🏪</div><label>Total Retailers</label><div class="val" id="m-retailers">—</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="card"><div class="card-header"><h3>Top Products by Sales</h3></div><div id="top-products"><div class="loading"><span class="spinner"></span>Loading...</div></div></div>
+    <div class="card"><div class="card-header"><h3>Recent Orders</h3></div><div id="recent-orders"><div class="loading"><span class="spinner"></span>Loading...</div></div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="card"><div class="card-header"><h3>Low Stock Alert</h3></div><div id="low-stock-list"><div class="loading"><span class="spinner"></span>Loading...</div></div></div>
+    <div class="card"><div class="card-header"><h3>Most Profitable Products</h3></div><div id="profit-list"><div class="loading"><span class="spinner"></span>Loading...</div></div></div>
+  </div>
+</div>
+
+<!-- ANALYTICS -->
+<div class="page" id="page-analytics">
+  <div class="page-header"><div><h1>Analytics</h1><p>Sales performance</p></div></div>
+  <div class="grid4">
+    <div class="metric"><label>Avg Order Value</label><div class="val" id="avg-order">—</div></div>
+    <div class="metric"><label>Delivered Orders</label><div class="val" id="del-orders">—</div></div>
+    <div class="metric"><label>Pending Orders</label><div class="val" id="pend-orders">—</div></div>
+    <div class="metric"><label>Total Products</label><div class="val" id="total-prods">—</div></div>
+  </div>
+  <div class="chart-box"><h3>Sales by Category</h3><div id="cat-chart"></div></div>
+  <div class="chart-box"><h3>Order Status Breakdown</h3><div id="status-chart"></div></div>
+</div>
+
+<!-- CATALOGUE -->
+<div class="page" id="page-catalogue">
+  <div class="page-header"><div><h1>Product Catalogue</h1><p>Manage your products</p></div><button class="btn btn-primary" onclick="openModal('add-product-modal')">+ Add Product</button></div>
+  <div class="search-bar">🔍 <input id="prod-search" oninput="filterProducts()" placeholder="Search products..."/></div>
+  <div class="filter-bar" id="cat-filters"></div>
+  <div class="prod-grid" id="prod-grid"><div class="loading"><span class="spinner"></span>Loading...</div></div>
+</div>
+
+<!-- INVENTORY -->
+<div class="page" id="page-inventory">
+  <div class="page-header"><div><h1>Inventory Tracker</h1><p>Monitor stock levels</p></div></div>
+  <div class="card"><table><thead><tr><th>#</th><th>Product</th><th>Category</th><th>Stock</th><th>Sold</th><th>MOQ</th><th>Level</th><th>Status</th><th>Action</th></tr></thead><tbody id="inv-table"><tr><td colspan="9"><div class="loading"><span class="spinner"></span>Loading...</div></td></tr></tbody></table></div>
+  <p id="inv-warning" style="font-size:13px;color:#888;margin-top:8px"></p>
+</div>
+
+<!-- ORDERS -->
+<div class="page" id="page-orders">
+  <div class="page-header"><div><h1>Orders & Delivery</h1><p>Track all retailer orders</p></div><button class="btn btn-primary" onclick="openModal('add-order-modal')">+ New Order</button></div>
+  <div class="filter-bar" id="order-filters"></div>
+  <div id="orders-list"><div class="loading"><span class="spinner"></span>Loading...</div></div>
+</div>
+
+<!-- RETAILERS -->
+<div class="page" id="page-retailers">
+  <div class="page-header"><div><h1>Retailers</h1><p>Your retailer network</p></div><button class="btn btn-primary" onclick="openModal('add-retailer-modal')">+ Add Retailer</button></div>
+  <div class="retailer-grid" id="retailer-grid"><div class="loading"><span class="spinner"></span>Loading...</div></div>
+</div>
+
+<!-- CHAT -->
+<div class="page" id="page-chat">
+  <div class="page-header"><div><h1>Forum & Chat</h1><p>Communicate with retailers</p></div></div>
+  <div class="chat-container">
+    <div class="chat-sidebar">
+      <div class="chat-sidebar-title">Retailers</div>
+      <div id="retailer-list"></div>
+    </div>
+    <div class="chat-main">
+      <div class="chat-header"><div class="av owner">G</div><div><strong style="font-size:13px">General Discussion</strong><br><span style="font-size:11px;color:#888">All retailers · Open forum</span></div></div>
+      <div class="chat-messages" id="chat-messages"><div class="loading"><span class="spinner"></span>Loading...</div></div>
+      <div class="chat-input-bar">
+        <input id="chat-input" placeholder="Write a message..." onkeydown="if(event.key==='Enter')sendMsg()"/>
+        <button class="btn btn-primary btn-sm" onclick="sendMsg()">Send ➤</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ANNOUNCEMENTS -->
+<div class="page" id="page-announce">
+  <div class="page-header"><div><h1>Announcements</h1><p>Broadcast to all retailers</p></div><button class="btn btn-primary" onclick="openModal('add-announce-modal')">+ New Announcement</button></div>
+  <div id="announce-list"><div class="loading"><span class="spinner"></span>Loading...</div></div>
+</div>
+
+<!-- SETTINGS -->
+<div class="page" id="page-settings">
+  <div class="page-header"><div><h1>Settings</h1><p>Configure your platform</p></div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="card"><div class="card-header"><h3>Business Info</h3></div>
+      <div style="padding:16px">
+        <div class="form-group"><label>Business Name</label><input value="WholesaleHub"/></div>
+        <div class="form-group"><label>Owner Name</label><input value="Owner"/></div>
+        <div class="form-group"><label>City</label><input value="Faisalabad"/></div>
+        <div class="form-group"><label>Phone</label><input value="+92 300 0000000"/></div>
+        <button class="btn btn-primary btn-sm" onclick="showToast('Settings saved!')">Save Changes</button>
+      </div>
+    </div>
+    <div class="card"><div class="card-header"><h3>Delivery Settings</h3></div>
+      <div style="padding:16px">
+        <div class="form-group"><label>Delivery Policy</label><select><option>Free delivery on all orders</option><option>Free above Rs 5,000</option><option>Free above Rs 10,000</option></select></div>
+        <div class="form-group"><label>Delivery Time</label><select><option>Same day</option><option>Next day</option><option>2-3 days</option></select></div>
+        <div class="form-group"><label>Delivery Zones</label><input value="Faisalabad, Lahore, Gujranwala"/></div>
+        <button class="btn btn-primary btn-sm" onclick="showToast('Saved!')">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end main -->
+
+<!-- ADD PRODUCT MODAL -->
+<div class="modal-bg" id="add-product-modal">
+  <div class="modal"><h3>Add New Product</h3>
+    <div class="form-grid">
+      <div class="form-group" style="grid-column:1/-1"><label>Product Name *</label><input id="np-name" placeholder="e.g. Basmati Rice 5kg"/></div>
+      <div class="form-group"><label>Category *</label><select id="np-cat"><option>Groceries</option><option>Electronics</option><option>Clothing</option><option>Household</option><option>Other</option></select></div>
+      <div class="form-group"><label>Price (Rs) *</label><input id="np-price" type="number" placeholder="850"/></div>
+      <div class="form-group"><label>Stock Qty *</label><input id="np-stock" type="number" placeholder="200"/></div>
+      <div class="form-group"><label>Min Order Qty</label><input id="np-moq" type="number" placeholder="10"/></div>
+      <div class="form-group"><label>Profit Margin %</label><input id="np-margin" type="number" placeholder="30"/></div>
+      <div class="form-group" style="grid-column:1/-1"><label>Badge</label><select id="np-badge"><option value="">None</option><option>Best Seller</option><option>High Margin</option><option>New Arrival</option><option>Flash Deal</option></select></div>
+    </div>
+    <div class="modal-btns"><button class="btn btn-secondary" onclick="closeModal('add-product-modal')">Cancel</button><button class="btn btn-primary" onclick="addProduct()">Add Product</button></div>
+  </div>
+</div>
+
+<!-- EDIT PRODUCT MODAL -->
+<div class="modal-bg" id="edit-product-modal">
+  <div class="modal"><h3>Edit Product</h3>
+    <input type="hidden" id="ep-id"/>
+    <div class="form-grid">
+      <div class="form-group" style="grid-column:1/-1"><label>Product Name</label><input id="ep-name"/></div>
+      <div class="form-group"><label>Category</label><select id="ep-cat"><option>Groceries</option><option>Electronics</option><option>Clothing</option><option>Household</option><option>Other</option></select></div>
+      <div class="form-group"><label>Price (Rs)</label><input id="ep-price" type="number"/></div>
+      <div class="form-group"><label>Stock Qty</label><input id="ep-stock" type="number"/></div>
+      <div class="form-group"><label>Min Order Qty</label><input id="ep-moq" type="number"/></div>
+      <div class="form-group"><label>Profit Margin %</label><input id="ep-margin" type="number"/></div>
+      <div class="form-group" style="grid-column:1/-1"><label>Badge</label><select id="ep-badge"><option value="">None</option><option>Best Seller</option><option>High Margin</option><option>New Arrival</option><option>Flash Deal</option></select></div>
+    </div>
+    <div class="modal-btns"><button class="btn btn-danger" onclick="deleteProduct()">Delete</button><button class="btn btn-secondary" onclick="closeModal('edit-product-modal')">Cancel</button><button class="btn btn-primary" onclick="saveProduct()">Save</button></div>
+  </div>
+</div>
+
+<!-- ADD ORDER MODAL -->
+<div class="modal-bg" id="add-order-modal">
+  <div class="modal"><h3>New Order</h3>
+    <div class="form-group"><label>Order ID *</label><input id="no-id" placeholder="ORD-006"/></div>
+    <div class="form-group"><label>Retailer Name *</label><input id="no-retailer" placeholder="Ahmed Store"/></div>
+    <div class="form-group"><label>Items</label><input id="no-items" placeholder="Rice x10, Sugar x5"/></div>
+    <div class="form-group"><label>Total (Rs) *</label><input id="no-total" type="number" placeholder="25000"/></div>
+    <div class="form-group"><label>Date</label><input id="no-date" type="date"/></div>
+    <div class="modal-btns"><button class="btn btn-secondary" onclick="closeModal('add-order-modal')">Cancel</button><button class="btn btn-primary" onclick="addOrder()">Add Order</button></div>
+  </div>
+</div>
+
+<!-- ADD RETAILER MODAL -->
+<div class="modal-bg" id="add-retailer-modal">
+  <div class="modal"><h3>Add Retailer</h3>
+    <div class="form-group"><label>Retailer Name *</label><input id="nr-name" placeholder="Ahmed Store"/></div>
+    <div class="form-group"><label>City *</label><input id="nr-city" placeholder="Faisalabad"/></div>
+    <div class="modal-btns"><button class="btn btn-secondary" onclick="closeModal('add-retailer-modal')">Cancel</button><button class="btn btn-primary" onclick="addRetailer()">Add Retailer</button></div>
+  </div>
+</div>
+
+<!-- ADD ANNOUNCEMENT MODAL -->
+<div class="modal-bg" id="add-announce-modal">
+  <div class="modal"><h3>New Announcement</h3>
+    <div class="form-group"><label>Title *</label><input id="ann-title" placeholder="New stock arrived!"/></div>
+    <div class="form-group"><label>Message *</label><textarea id="ann-body" rows="3" placeholder="Write your announcement..."></textarea></div>
+    <div class="form-group"><label>Type</label><select id="ann-type"><option>Info</option><option>Offer</option><option>Alert</option></select></div>
+    <div class="modal-btns"><button class="btn btn-secondary" onclick="closeModal('add-announce-modal')">Cancel</button><button class="btn btn-primary" onclick="addAnnouncement()">Publish</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var SUPA_URL='https://esfanzrrywpfexlukysz.supabase.co';
+var SUPA_KEY='sb_publishable_Mi8-5nunItlqHg3NICDVww_AOmYRl-r';
+
+var products=[],orders=[],retailers=[],messages=[],announcements=[];
+var catFilter='All',orderFilter='All';
+var avColors=['#1d9e75','#185fa5','#854f0b','#5b21b6','#b91c1c','#0f6e56','#ba7517','#0369a1'];
+var badgeClass={'Best Seller':'b-green','High Margin':'b-amber','New Arrival':'b-blue','Flash Deal':'b-purple'};
+var statusClass={'Delivered':'b-green','Out for Delivery':'b-blue','Confirmed':'b-green','Pending':'b-amber'};
+var statusNext={'Pending':'Confirmed','Confirmed':'Out for Delivery','Out for Delivery':'Delivered'};
+
+async function db(table,method,body,id){
+  var url=SUPA_URL+'/rest/v1/'+table+(id?'?id=eq.'+id:'');
+  var opts={method:method||'GET',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'}};
+  if(body)opts.body=JSON.stringify(body);
+  var r=await fetch(url,opts);
+  if(!r.ok){var e=await r.text();console.error(e);return null;}
+  var txt=await r.text();
+  return txt?JSON.parse(txt):[];
+}
+
+async function loadAll(){
+  var [p,o,r,m,a]=await Promise.all([db('products'),db('orders'),db('retailers'),db('messages?order=created_at.asc'),db('announcements?order=created_at.desc')]);
+  products=p||[];orders=o||[];retailers=r||[];messages=m||[];announcements=a||[];
+  updateBadges();
+}
+
+function updateBadges(){
+  var low=products.filter(p=>p.stock<100).length;
+  var pend=orders.filter(o=>o.status==='Pending').length;
+  document.getElementById('nb-low').textContent=low||'';
+  document.getElementById('nb-orders').textContent=pend||'';
+}
+
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  btn.classList.add('active');
+  var renders={dashboard:renderDashboard,catalogue:renderCatalogue,inventory:renderInventory,orders:renderOrders,retailers:renderRetailers,chat:renderChat,announce:renderAnnouncements,analytics:renderAnalytics};
+  if(renders[id])renders[id]();
+}
+
+function renderDashboard(){
+  var rev=orders.filter(o=>o.status==='Delivered').reduce((s,o)=>s+(+o.total),0);
+  document.getElementById('m-revenue').textContent='Rs '+rev.toLocaleString();
+  document.getElementById('m-orders').textContent=orders.length;
+  document.getElementById('m-pending').textContent=orders.filter(o=>o.status==='Pending'||o.status==='Confirmed').length;
+  document.getElementById('m-retailers').textContent=retailers.length;
+  document.getElementById('top-products').innerHTML=[...products].sort((a,b)=>b.sold-a.sold).slice(0,5).map((p,i)=>
+    `<div class="row"><div style="width:22px;height:22px;border-radius:50%;background:#f0f2f5;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#888;flex-shrink:0">${i+1}</div>
+    <div style="flex:1"><strong style="font-size:13px">${p.name}</strong><br><small style="color:#888">${p.category}</small></div>
+    ${p.badge?`<span class="badge ${badgeClass[p.badge]||'b-gray'}">${p.badge}</span>`:''}
+    <div style="font-size:13px;font-weight:600;min-width:80px;text-align:right">${(p.sold||0).toLocaleString()} sold</div></div>`
+  ).join('')||'<div class="loading">No products yet</div>';
+  document.getElementById('recent-orders').innerHTML=orders.slice(0,5).map(o=>
+    `<div class="row"><div style="flex:1"><strong style="font-size:13px">${o.retailer}</strong><br><small style="color:#888">${o.id} · ${o.date}</small></div>
+    <span class="badge ${statusClass[o.status]||'b-gray'}">${o.status}</span>
+    <div style="font-size:13px;font-weight:600;min-width:90px;text-align:right">Rs ${(+o.total).toLocaleString()}</div></div>`
+  ).join('')||'<div class="loading">No orders yet</div>';
+  document.getElementById('low-stock-list').innerHTML=products.filter(p=>p.stock<120).sort((a,b)=>a.stock-b.stock).slice(0,5).map(p=>
+    `<div class="row"><div style="flex:1"><strong style="font-size:13px">${p.name}</strong></div>
+    <span class="badge ${p.stock<80?'b-red':'b-amber'}">${p.stock} left</span></div>`
+  ).join('')||'<div style="padding:14px 16px;font-size:13px;color:#888">✅ All items well stocked</div>';
+  document.getElementById('profit-list').innerHTML=[...products].sort((a,b)=>(b.margin||0)-(a.margin||0)).slice(0,5).map(p=>
+    `<div class="row"><div style="flex:1"><strong style="font-size:13px">${p.name}</strong><br><small style="color:#888">${p.category}</small></div>
+    <span class="badge b-green">${p.margin||0}% margin</span></div>`
+  ).join('')||'<div class="loading">No products yet</div>';
+}
+
+function renderAnalytics(){
+  var avg=orders.length?Math.round(orders.reduce((s,o)=>s+(+o.total),0)/orders.length):0;
+  document.getElementById('avg-order').textContent='Rs '+avg.toLocaleString();
+  document.getElementById('del-orders').textContent=orders.filter(o=>o.status==='Delivered').length;
+  document.getElementById('pend-orders').textContent=orders.filter(o=>o.status==='Pending').length;
+  document.getElementById('total-prods').textContent=products.length;
+  var cats={};
+  products.forEach(p=>{cats[p.category]=(cats[p.category]||0)+(p.sold||0);});
+  var total=Object.values(cats).reduce((a,b)=>a+b,0)||1;
+  document.getElementById('cat-chart').innerHTML=Object.entries(cats).map(([c,v])=>{
+    var pct=Math.round(v/total*100);
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <div style="font-size:12px;min-width:90px;color:#555">${c}</div>
+      <div style="flex:1;height:8px;background:#f0f2f5;border-radius:4px"><div style="height:100%;border-radius:4px;background:#1d9e75;width:${pct}%"></div></div>
+      <div style="font-size:12px;font-weight:600;min-width:35px">${pct}%</div></div>`;
+  }).join('')||'<p style="color:#888;font-size:13px">No data yet</p>';
+  var statuses=['Delivered','Out for Delivery','Confirmed','Pending'];
+  var sc={'Delivered':'#1d9e75','Out for Delivery':'#185fa5','Confirmed':'#639922','Pending':'#ba7517'};
+  document.getElementById('status-chart').innerHTML=statuses.map(s=>{
+    var n=orders.filter(o=>o.status===s).length;
+    var pct=orders.length?Math.round(n/orders.length*100):0;
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <div style="font-size:12px;min-width:110px;color:#555">${s}</div>
+      <div style="flex:1;height:8px;background:#f0f2f5;border-radius:4px"><div style="height:100%;border-radius:4px;background:${sc[s]};width:${pct}%"></div></div>
+      <div style="font-size:12px;font-weight:600;min-width:50px">${n} (${pct}%)</div></div>`;
+  }).join('');
+}
+
+function renderCatalogue(){
+  var cats=['All',...new Set(products.map(p=>p.category))];
+  document.getElementById('cat-filters').innerHTML=cats.map(c=>
+    `<button class="filter-btn ${catFilter===c?'active':''}" onclick="setCatFilter('${c}')">${c}</button>`
+  ).join('');
+  var q=(document.getElementById('prod-search').value||'').toLowerCase();
+  var filtered=products.filter(p=>(catFilter==='All'||p.category===catFilter)&&(!q||p.name.toLowerCase().includes(q)));
+  document.getElementById('prod-grid').innerHTML=filtered.map(p=>
+    `<div class="prod-card" onclick="openEditProduct(${p.id})">
+      <div class="prod-top"><div class="prod-name">${p.name}</div>${p.badge?`<span class="badge ${badgeClass[p.badge]||'b-gray'}" style="font-size:10px;flex-shrink:0;margin-left:4px">${p.badge}</span>`:''}</div>
+      <div class="prod-cat">${p.category} · ${p.margin||0}% margin</div>
+      <div class="prod-price">Rs ${(+p.price).toLocaleString()}</div>
+      <div class="prod-meta"><span>📦 ${p.stock} units</span><span>MOQ: ${p.moq||1}</span></div>
+      <div class="stock-bar"><div class="stock-fill" style="width:${Math.min(100,(p.stock/500)*100)}%;background:${p.stock<100?'#ef4444':p.stock<200?'#f59e0b':'#1d9e75'}"></div></div>
+    </div>`
+  ).join('')||'<div style="grid-column:1/-1;text-align:center;padding:30px;color:#888">No products found. Add your first product!</div>';
+}
+
+function setCatFilter(c){catFilter=c;renderCatalogue();}
+function filterProducts(){renderCatalogue();}
+
+function openEditProduct(id){
+  var p=products.find(x=>x.id===id);if(!p)return;
+  document.getElementById('ep-id').value=p.id;
+  document.getElementById('ep-name').value=p.name;
+  document.getElementById('ep-cat').value=p.category;
+  document.getElementById('ep-price').value=p.price;
+  document.getElementById('ep-stock').value=p.stock;
+  document.getElementById('ep-moq').value=p.moq||1;
+  document.getElementById('ep-margin').value=p.margin||0;
+  document.getElementById('ep-badge').value=p.badge||'';
+  openModal('edit-product-modal');
+}
+
+async function saveProduct(){
+  var id=document.getElementById('ep-id').value;
+  var data={name:document.getElementById('ep-name').value,category:document.getElementById('ep-cat').value,price:+document.getElementById('ep-price').value,stock:+document.getElementById('ep-stock').value,moq:+document.getElementById('ep-moq').value,margin:+document.getElementById('ep-margin').value,badge:document.getElementById('ep-badge').value};
+  var r=await db('products','PATCH',data,id);
+  if(r){var i=products.findIndex(x=>x.id==id);if(i>=0)products[i]={...products[i],...data};showToast('Product updated!');closeModal('edit-product-modal');renderCatalogue();renderInventory();updateBadges();}
+  else showToast('Error updating product');
+}
+
+async function deleteProduct(){
+  var id=document.getElementById('ep-id').value;
+  if(!confirm('Delete this product?'))return;
+  await fetch(SUPA_URL+'/rest/v1/products?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+  products=products.filter(x=>x.id!=id);
+  showToast('Product deleted!');closeModal('edit-product-modal');renderCatalogue();renderInventory();updateBadges();
+}
+
+async function addProduct(){
+  var name=document.getElementById('np-name').value.trim();
+  var price=+document.getElementById('np-price').value;
+  var stock=+document.getElementById('np-stock').value;
+  if(!name||!price||!stock){showToast('Please fill required fields');return;}
+  var data={name,category:document.getElementById('np-cat').value,price,stock,sold:0,badge:document.getElementById('np-badge').value,moq:+document.getElementById('np-moq').value||1,margin:+document.getElementById('np-margin').value||0};
+  var r=await db('products','POST',data);
+  if(r&&r[0]){products.push(r[0]);showToast('Product added!');closeModal('add-product-modal');['np-name','np-price','np-stock','np-moq','np-margin'].forEach(id=>document.getElementById(id).value='');renderCatalogue();updateBadges();}
+  else showToast('Error adding product');
+}
+
+function renderInventory(){
+  document.getElementById('inv-table').innerHTML=products.map((p,i)=>
+    `<tr><td>${i+1}</td><td><strong>${p.name}</strong></td><td>${p.category}</td><td>${p.stock}</td><td>${(p.sold||0).toLocaleString()}</td><td>${p.moq||1}</td>
+    <td><div style="background:#f0f2f5;border-radius:4px;height:6px;width:80px"><div style="height:100%;border-radius:4px;background:${p.stock<100?'#ef4444':p.stock<200?'#f59e0b':'#1d9e75'};width:${Math.min(100,p.stock/500*100)}%"></div></div></td>
+    <td><span class="badge ${p.stock<100?'b-red':'b-green'}">${p.stock<100?'Low':'OK'}</span></td>
+    <td><button class="btn btn-secondary btn-sm" onclick="openEditProduct(${p.id})">Edit</button></td></tr>`
+  ).join('')||'<tr><td colspan="9" style="text-align:center;padding:20px;color:#888">No products yet</td></tr>';
+  var low=products.filter(p=>p.stock<100).length;
+  document.getElementById('inv-warning').textContent=low>0?`⚠️ ${low} products are running low. Restock soon.`:'✅ All products have sufficient stock.';
+}
+
+function renderOrders(){
+  var statuses=['All','Pending','Confirmed','Out for Delivery','Delivered'];
+  document.getElementById('order-filters').innerHTML=statuses.map(s=>
+    `<button class="filter-btn ${orderFilter===s?'active':''}" onclick="setOrderFilter('${s}')">${s}${s!=='All'?' ('+orders.filter(o=>o.status===s).length+')':''}</button>`
+  ).join('');
+  var filtered=orderFilter==='All'?orders:orders.filter(o=>o.status===orderFilter);
+  document.getElementById('orders-list').innerHTML=filtered.map(o=>
+    `<div class="order-card">
+      <div class="order-top"><div><span class="order-retailer">${o.retailer}</span> <span class="order-meta">${o.id} · ${o.date}</span></div><span class="badge ${statusClass[o.status]||'b-gray'}">${o.status}</span></div>
+      <div class="order-items">📋 ${o.items||'—'}</div>
+      <div class="order-bottom">
+        <div><strong style="font-size:15px">Rs ${(+o.total).toLocaleString()}</strong> <span style="font-size:11px;color:#1d9e75;font-weight:600">✓ Free delivery</span></div>
+        <div style="display:flex;gap:6px">${statusNext[o.status]?`<button class="btn btn-primary btn-sm" onclick="advanceOrder('${o.id}')">→ ${statusNext[o.status]}</button>`:''}<button class="btn btn-danger btn-sm" onclick="deleteOrder('${o.id}')">🗑</button></div>
+      </div>
+    </div>`
+  ).join('')||'<div style="text-align:center;padding:30px;color:#888">No orders yet. Add your first order!</div>';
+}
+
+function setOrderFilter(s){orderFilter=s;renderOrders();}
+
+async function addOrder(){
+  var id=document.getElementById('no-id').value.trim();
+  var retailer=document.getElementById('no-retailer').value.trim();
+  var total=+document.getElementById('no-total').value;
+  if(!id||!retailer||!total){showToast('Please fill required fields');return;}
+  var data={id,retailer,items:document.getElementById('no-items').value,total,status:'Pending',date:document.getElementById('no-date').value||new Date().toISOString().split('T')[0]};
+  var r=await db('orders','POST',data);
+  if(r&&r[0]){orders.unshift(r[0]);showToast('Order added!');closeModal('add-order-modal');['no-id','no-retailer','no-items','no-total','no-date'].forEach(i=>document.getElementById(i).value='');renderOrders();updateBadges();}
+  else showToast('Error — order ID may already exist');
+}
+
+async function advanceOrder(id){
+  var o=orders.find(x=>x.id===id);
+  if(!o||!statusNext[o.status])return;
+  var ns=statusNext[o.status];
+  var r=await db('orders','PATCH',{status:ns},id);
+  if(r){o.status=ns;showToast('Order → '+ns);renderOrders();renderDashboard();updateBadges();}
+}
+
+async function deleteOrder(id){
+  if(!confirm('Delete this order?'))return;
+  await fetch(SUPA_URL+'/rest/v1/orders?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+  orders=orders.filter(x=>x.id!==id);showToast('Order deleted');renderOrders();updateBadges();
+}
+
+function renderRetailers(){
+  document.getElementById('retailer-grid').innerHTML=retailers.map((r,i)=>
+    `<div class="retailer-card">
+      <div class="ret-card-top"><div class="ret-card-av" style="background:${avColors[i%avColors.length]}">${r.name.charAt(0)}</div>
+      <div><strong style="font-size:13px">${r.name}</strong><br><span style="font-size:12px;color:#888">📍 ${r.city}</span></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:#888;border-top:1px solid #f0f0f0;padding-top:10px">
+        <span>📦 ${r.orders||0} orders</span><span>💰 Rs ${((r.total||0)/1000).toFixed(0)}k</span></div>
+      <div style="margin-top:10px;display:flex;gap:6px">
+        <button class="btn btn-danger btn-sm" onclick="deleteRetailer(${r.id})">Remove</button>
+      </div>
+    </div>`
+  ).join('')||'<div style="grid-column:1/-1;text-align:center;padding:30px;color:#888">No retailers yet. Add your first retailer!</div>';
+}
+
+async function addRetailer(){
+  var name=document.getElementById('nr-name').value.trim();
+  var city=document.getElementById('nr-city').value.trim();
+  if(!name||!city){showToast('Please fill all fields');return;}
+  var r=await db('retailers','POST',{name,city,orders:0,total:0,color:avColors[retailers.length%avColors.length]});
+  if(r&&r[0]){retailers.push(r[0]);showToast('Retailer added!');closeModal('add-retailer-modal');document.getElementById('nr-name').value='';document.getElementById('nr-city').value='';renderRetailers();updateBadges();}
+  else showToast('Error adding retailer');
+}
+
+async function deleteRetailer(id){
+  if(!confirm('Remove this retailer?'))return;
+  await fetch(SUPA_URL+'/rest/v1/retailers?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+  retailers=retailers.filter(x=>x.id!==id);showToast('Retailer removed');renderRetailers();updateBadges();
+}
+
+function renderChat(){
+  document.getElementById('retailer-list').innerHTML=retailers.map((r,i)=>
+    `<div class="retailer-item"><div class="ret-av" style="background:${avColors[i%avColors.length]}">${r.name.charAt(0)}</div><div><div class="ret-name">${r.name}</div><div style="font-size:11px;color:#888">${r.city}</div></div></div>`
+  ).join('')||'<div style="padding:12px;font-size:12px;color:#888">No retailers</div>';
+  var box=document.getElementById('chat-messages');
+  box.innerHTML=messages.map(m=>
+    `<div class="msg ${m.role}"><div class="av ${m.role}">${m.author.charAt(0)}</div>
+    <div class="bubble-wrap"><div class="msg-meta">${m.author} · ${m.time}</div><div class="bubble ${m.role}">${m.text}</div></div></div>`
+  ).join('')||'<div style="text-align:center;padding:30px;color:#888">No messages yet. Start the conversation!</div>';
+  box.scrollTop=box.scrollHeight;
+}
+
+async function sendMsg(){
+  var inp=document.getElementById('chat-input');
+  var txt=inp.value.trim();if(!txt)return;
+  var now=new Date();
+  var data={author:'Owner (You)',role:'owner',time:now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),text:txt};
+  inp.value='';
+  var r=await db('messages','POST',data);
+  if(r&&r[0]){messages.push(r[0]);renderChat();}
+  else showToast('Error sending message');
+}
+
+function renderAnnouncements(){
+  var colors={'Info':'#e1f5ee','Offer':'#faeeda','Alert':'#fcebeb'};
+  var tc={'Info':'#0f6e56','Offer':'#854f0b','Alert':'#a32d2d'};
+  document.getElementById('announce-list').innerHTML=announcements.map(a=>
+    `<div class="announce-card" style="background:${colors[a.type]||'#e1f5ee'}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <h4 style="font-size:13px;font-weight:700;color:${tc[a.type]||'#0f6e56'}">${a.title}</h4>
+        <div style="display:flex;gap:6px;align-items:center"><span class="badge b-green">${a.type}</span>
+        <button class="btn btn-danger btn-sm" onclick="deleteAnnouncement(${a.id})">🗑</button></div>
+      </div>
+      <p style="font-size:12px;color:#374151;line-height:1.5">${a.body}</p>
+      <div style="font-size:11px;color:#888;margin-top:8px">📅 ${a.date} · Sent to ${retailers.length} retailers</div>
+    </div>`
+  ).join('')||'<div style="text-align:center;padding:30px;color:#888">No announcements yet.</div>';
+}
+
+async function addAnnouncement(){
+  var title=document.getElementById('ann-title').value.trim();
+  var body=document.getElementById('ann-body').value.trim();
+  if(!title||!body){showToast('Please fill all fields');return;}
+  var data={title,body,type:document.getElementById('ann-type').value,date:new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})};
+  var r=await db('announcements','POST',data);
+  if(r&&r[0]){announcements.unshift(r[0]);showToast('Announcement published!');closeModal('add-announce-modal');document.getElementById('ann-title').value='';document.getElementById('ann-body').value='';renderAnnouncements();}
+  else showToast('Error publishing announcement');
+}
+
+async function deleteAnnouncement(id){
+  if(!confirm('Delete this announcement?'))return;
+  await fetch(SUPA_URL+'/rest/v1/announcements?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+  announcements=announcements.filter(x=>x.id!==id);showToast('Deleted');renderAnnouncements();
+}
+
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('show');}));
+
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// INIT
+loadAll().then(()=>{renderDashboard();showToast('Connected to database ✓');});
+</script>
+</body>
+</html>
