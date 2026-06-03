@@ -394,6 +394,12 @@ var BC={'Best Seller':'bg','High Margin':'ba','New Arrival':'bb','Flash Deal':'b
 var SC={'Delivered':'bg','Out for Delivery':'bb','Confirmed':'bg','Pending':'ba'};
 var SN={'Pending':'Confirmed','Confirmed':'Out for Delivery','Out for Delivery':'Delivered'};
 
+function togglePwd(id,el){
+  var inp=document.getElementById(id);
+  if(inp.type==='password'){inp.type='text';el.textContent='🙈';}
+  else{inp.type='password';el.textContent='👁';}
+}
+
 function switchTab(t){
   document.querySelectorAll('.auth-tab').forEach((b,i)=>b.classList.toggle('active',i===(t==='login'?0:1)));
   document.getElementById('lf').style.display=t==='login'?'block':'none';
