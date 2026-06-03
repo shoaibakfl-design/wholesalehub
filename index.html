@@ -556,6 +556,8 @@ async function doLogout(){
   currentUser=null;currentToken=null;currentRole=null;
   document.getElementById('app-screen').style.display='none';
   document.getElementById('auth-screen').style.display='block';
+  document.getElementById('login-email').value='';
+  document.getElementById('login-pass').value='';
   showToast('Logged out!');
 }
 
