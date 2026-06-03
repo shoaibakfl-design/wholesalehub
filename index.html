@@ -443,8 +443,10 @@ async function doSignup(){
       body:JSON.stringify({name:n,city:c,role:'retailer'})
     });
   }
-  showMsg('✅ Account created! Please check your email and click the confirmation link, then login.',true);
-  switchTab('login');
+  showMsg('✅ Account created! Please check your email inbox and click the confirmation link, then come back and login.',true);
+  document.getElementById('lf').style.display='none';
+  document.getElementById('sf').style.display='none';
+  setTimeout(()=>{switchTab('login');},4000);
 }
 
 async function loadRole(){
