@@ -430,7 +430,6 @@ async function doLogin(){
 
 async function doSignup(){
   var n=document.getElementById('sn').value.trim();
-  var c=document.getElementById('sc').value.trim();
   var e=document.getElementById('se').value.trim();
   var p=document.getElementById('sp2').value;
   if(!n||!e||!p){showMsg('Fill all fields');return;}
@@ -446,7 +445,7 @@ async function doSignup(){
     await fetch(SU+'/rest/v1/profiles?id=eq.'+d.user.id,{
       method:'PATCH',
       headers:{'apikey':SK,'Content-Type':'application/json','Prefer':'return=representation'},
-      body:JSON.stringify({name:n,city:c,role:'retailer'})
+      body:JSON.stringify({name:n,role:'retailer'})
     });
   }
   showMsg('✅ Account created! Please check your email inbox and click the confirmation link, then come back and login.',true);
